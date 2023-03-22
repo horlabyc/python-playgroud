@@ -55,3 +55,18 @@ def reduce_stock_quantity(id: int, quantity: str):
         else:
             with db_connection:
                 cursor.execute("UPDATE stocks SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
+
+def increase_stock_quantity(id: int, quantity: str):
+    cursor.execute("SELECT * FROM stocks WHERE id=:id", {'id': id})
+    stock = cursor.fetchone()
+    if not stock:
+        print("Stock not valid")
+        return
+    else:
+        new_stock_quantity = stock[3] + quantity
+        with db_connection:
+                cursor.execute("UPDATE stocks SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
+
+def delete_stock(id):
+    with db_connection:
+        cursor.execute("DELETE from stocks WHERE id=:id", {'id': id})
