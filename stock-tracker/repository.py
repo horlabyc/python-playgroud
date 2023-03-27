@@ -1,11 +1,11 @@
 import sqlite3
-from model import StockItem
+from model import Inventory
 
-db_connection = sqlite3.connect('stocks.db')
+db_connection = sqlite3.connect('inventories.db')
 cursor = db_connection.cursor()
 
 def create_table():
-    cursor.execute("""CREATE TABLE IF NOT EXISTS stocks(
+    cursor.execute("""CREATE TABLE IF NOT EXISTS inventories(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name    text,
         category    text,
@@ -17,15 +17,15 @@ def create_table():
 create_table()
 
 def get_all_stocks():
-    cursor.execute('select * from stocks')
+    cursor.execute('select * from inventories')
     all_stocks = cursor.fetchall()
     stocks = []
     for stock in all_stocks:
-        stocks.append(StockItem(stock[1], stock[2], stock[3], stock[4], stock[5], stock[0]))
+        stocks.append(Inventory(stock[1], stock[2], stock[3], stock[4], stock[5], stock[0]))
     return stocks
 
-def insert_stock(stock: StockItem):
-    cursor.execute("SELECT * FROM stocks WHERE LOWER(name) = ?", (stock.name.lower(),))
+def insert_stock(stock: Inventory):
+    cursor.execute("SELECT * FROM inventories WHERE LOWER(name) = ?", (stock.name.lower(),))
     results = cursor.fetchall()
     if len(results):
         existing_stock = results[0]
@@ -33,16 +33,16 @@ def insert_stock(stock: StockItem):
         new_quantity = existing_stock[3] + stock.quantity
         id = existing_stock[0]
         with db_connection:
-            cursor.execute("UPDATE stocks SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_quantity})
+            cursor.execute("UPDATE inventories SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_quantity})
     else:
         with db_connection:
             cursor.execute(
-                'INSERT INTO stocks(name, category, created_at, updated_at, quantity) VALUES(?,?,?,?,?)', 
+                'INSERT INTO inventories(name, category, created_at, updated_at, quantity) VALUES(?,?,?,?,?)', 
                 (stock.name, stock.category, stock.created_at, stock.updated_at, stock.quantity)
             )
 
 def reduce_stock_quantity(id: int, quantity: str):
-    cursor.execute("SELECT * FROM stocks WHERE id=:id", {'id': id})
+    cursor.execute("SELECT * FROM inventories WHERE id=:id", {'id': id})
     stock = cursor.fetchone()
     if not stock:
         print("Stock not valid")
@@ -54,10 +54,10 @@ def reduce_stock_quantity(id: int, quantity: str):
             return
         else:
             with db_connection:
-                cursor.execute("UPDATE stocks SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
+                cursor.execute("UPDATE inventories SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
 
 def increase_stock_quantity(id: int, quantity: str):
-    cursor.execute("SELECT * FROM stocks WHERE id=:id", {'id': id})
+    cursor.execute("SELECT * FROM inventories WHERE id=:id", {'id': id})
     stock = cursor.fetchone()
     if not stock:
         print("Stock not valid")
@@ -65,8 +65,8 @@ def increase_stock_quantity(id: int, quantity: str):
     else:
         new_stock_quantity = stock[3] + quantity
         with db_connection:
-                cursor.execute("UPDATE stocks SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
+                cursor.execute("UPDATE inventories SET quantity=:quantity WHERE id=:id", {'id': id, 'quantity': new_stock_quantity})
 
 def delete_stock(id):
     with db_connection:
-        cursor.execute("DELETE from stocks WHERE id=:id", {'id': id})
+        cursor.execute("DELETE from inventories WHERE id=:id", {'id': id})

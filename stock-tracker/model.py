@@ -1,6 +1,6 @@
 import datetime
 
-class StockItem:
+class Inventory:
     def __init__(self, name, category, quantity, 
                  created_at=None, updated_at=None, id=None
                 ):
@@ -10,6 +10,3 @@ class StockItem:
         self.updated_at = updated_at if updated_at is not None else datetime.datetime.now().isoformat()
         self.quantity = quantity
         self.id = id if id is not None else None
-    
-    def __repr__(self) -> str:
-        return f"({self.name}, {self.category}, {self.quantity}, {self.created_at}, {self.updated_at}, {self.id})"

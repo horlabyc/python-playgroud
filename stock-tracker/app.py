@@ -3,40 +3,40 @@ from rich.console import Console
 from rich.table import Table
 
 from repository import get_all_stocks, insert_stock, reduce_stock_quantity, increase_stock_quantity, delete_stock
-from model import StockItem
+from model import Inventory
 
 console = Console()
 app = typer.Typer()
 
-@app.command(short_help="show all stocks")
+@app.command(short_help="add new stock")
 def add(name: str, quantity: int, category: str):
     typer.echo(f"Adding new stock...")
-    new_stock = StockItem(name, category, quantity)
+    new_stock = Inventory(name, category, quantity)
     insert_stock(new_stock)
-    show()
+    display()
 
 @app.command(short_help="reduce stock quantity")
 def reduce_stock(id: int, quantity: int):
     typer.echo(f"Reducing stock quantity...")
     reduce_stock_quantity(id, quantity)
-    show()
+    display()
 
 @app.command(short_help="increase stock quantity")
 def increase_stock(id: int, quantity: int):
     typer.echo(f"Increasing stock quantity...")
     increase_stock_quantity(id, quantity)
-    show()
+    display()
 
 @app.command(short_help="clear stock")
 def clear_stock(id: int):
     typer.echo(f"Clearing stock...")
     delete_stock(id)
-    show()
+    display()
 
 @app.command(short_help="show all stocks")
-def show():
+def display():
     stocks = get_all_stocks()
-    console.print("[bold magenta]-=-=-=-=-=-Stock Tracker Application-=-=-=-=-=-[/bold magenta]",":notebook_with_decorative_cover:") 
+    console.print("[bold magenta]-=-=-=-=-=-Inventory management application-=-=-=-=-=-[/bold magenta]",":notebook_with_decorative_cover:") 
 
     table = Table(show_header=True, header_style="bold blue")
     table.add_column("id", style="dim", width=6)
